@@ -4,7 +4,6 @@
 
 class Contact
 {
-private:
     int age;
     std::string name;
     std::string number;

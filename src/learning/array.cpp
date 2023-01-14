@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 Contact::Contact()
 {
@@ -55,11 +56,22 @@ Contact getInputContact()
     std::cin.clear();
     std::cin.sync();
 
-    return {age, name, number};
+    return Contact{age, name, number};
+}
+void add(std::vector<Contact> *contacts)
+{
+    Contact newContact{getInputContact()};
+
+    contacts->push_back(newContact);
+}
+void showAll(std::vector<Contact> *contacts)
+{
+    for (int i = 0; i < contacts->size(); i++)
+        std::cout << contacts->at(i).toString() << std::endl;
 }
 void initArray()
 {
-    Contact contacts[10];
+    std::vector<Contact> contacts;
 
     std::cout << "Hello, your list contacts" << std::endl;
 
@@ -67,13 +79,12 @@ void initArray()
     {
         int option{0};
 
+        std::cout << "You have " << contacts.size() << " contacts." << std::endl;
         std::cout << "Action: " << std::endl
                   << std::endl;
         std::cout << "1. Add" << std::endl;
-        std::cout << "2. Edit" << std::endl;
-        std::cout << "3. Search" << std::endl;
-        std::cout << "4. Show all" << std::endl;
-        std::cout << "5. Exit" << std::endl
+        std::cout << "2. Show all" << std::endl;
+        std::cout << "3. Exit" << std::endl
                   << std::endl;
         std::cout << "Select action: ";
         std::cin >> option;
@@ -82,23 +93,14 @@ void initArray()
         std::cout << std::endl;
 
         if (option == 1)
-        {
-        }
+            add(&contacts);
         else if (option == 2)
-        {
-        }
+            showAll(&contacts);
         else if (option == 3)
-        {
-        }
-        else if (option == 4)
-        {
-        }
-        else if (option == 5)
             break;
         else
-        {
-            std::cout << "Option invalid, try again" << std::endl
-                      << std::endl;
-        }
+            std::cout << "Option invalid, try again" << std::endl;
+
+        std::cout << std::endl;
     }
 }
