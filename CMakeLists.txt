@@ -15,6 +15,7 @@ set(opts_src "src/main.cpp")
 # Una de las características más interesantes de CMake es que es capaz de encontrar librerías externas 
 # que necesite nuestro programa. Esta característica se implementa con plugins de CMake
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 
 # En grandes librerías, podemos pedir solo ciertos componentes
@@ -22,7 +23,7 @@ find_package(glfw3 REQUIRED)
 # find_package(wxWidgets COMPONENTS core gl html base net)
 # Si todo va bien, tenemos las variables wxWidgets_FOUND, wxWidgets_LIBRARIES y wxWidgets_INCLUDE_DIR
 
-include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
 
 # ----- FIN LIBRERIAS EXTERNAS ----- #
 
@@ -48,7 +49,7 @@ ENDIF()
 # GLOB no es recursivo. Si lo necesitas, usa GLOB_RECURSE
 file(GLOB libs_src 
     "libs/*.h" "libs/*.cpp"
-    #"libs/imgui/*.h" "libs/imgui/*.cpp"
+    "libs/imgui/*.h" "libs/imgui/*.cpp"
     "src/learning/*.h" "src/learning/*.cpp"
     )
 
@@ -57,4 +58,4 @@ file(GLOB libs_src
 # Se creará un ejecutable llamado opts en Linux o opts.exe en Windows
 # Se hace referencia a las variables con ${NOMBRE_VARIABLE}
 add_executable(opts ${opts_src} ${libs_src})
-target_link_libraries(opts ${OPENGL_gl_LIBRARY} glfw)
+target_link_libraries(opts ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
