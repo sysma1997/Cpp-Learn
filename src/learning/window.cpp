@@ -74,7 +74,7 @@ void initWindow()
         ImGui::Begin("Hello Window in C++ with GLEW, GLFW and ImGui");
 
         ImGui::Text("This is some useful text.");
-        ImGui::ColorEdit3("Backgorund", (float *)&background);
+        ImGui::ColorEdit4("Backgorund", (float *)&background);
 
         if (ImGui::Button("Button"))
             counter++;

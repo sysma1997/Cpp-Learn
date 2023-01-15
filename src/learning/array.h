@@ -2,15 +2,15 @@
 #include <iostream>
 #include <string>
 
-class Contact
+class ContactArray
 {
     int age;
     std::string name;
     std::string number;
 
 public:
-    Contact();
-    Contact(int age, std::string name, std::string number);
+    ContactArray();
+    ContactArray(int age, std::string name, std::string number);
 
     int getAge();
     std::string getName();

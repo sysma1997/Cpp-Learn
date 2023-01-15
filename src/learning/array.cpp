@@ -5,31 +5,31 @@
 #include <string>
 #include <vector>
 
-Contact::Contact()
+ContactArray::ContactArray()
 {
     this->age = 0;
     this->name = "";
     this->number = "";
 }
-Contact::Contact(int age, std::string name, std::string number)
+ContactArray::ContactArray(int age, std::string name, std::string number)
 {
     this->age = age;
     this->name = name;
     this->number = number;
 }
-int Contact::getAge()
+int ContactArray::getAge()
 {
     return age;
 }
-std::string Contact::getName()
+std::string ContactArray::getName()
 {
     return name;
 }
-std::string Contact::getNumber()
+std::string ContactArray::getNumber()
 {
     return number;
 }
-std::string Contact::toString()
+std::string ContactArray::toString()
 {
     std::stringstream stream;
     stream << "Name: " << name << ", Age: " << age << ", Number: " << number;
@@ -37,7 +37,7 @@ std::string Contact::toString()
     return stream.str();
 }
 
-Contact getInputContact()
+ContactArray getInputContact()
 {
     int age{0};
     std::string name;
@@ -56,22 +56,22 @@ Contact getInputContact()
     std::cin.clear();
     std::cin.sync();
 
-    return Contact{age, name, number};
+    return ContactArray{age, name, number};
 }
-void add(std::vector<Contact> *contacts)
+void add(std::vector<ContactArray> *contacts)
 {
-    Contact newContact{getInputContact()};
+    ContactArray newContact{getInputContact()};
 
     contacts->push_back(newContact);
 }
-void showAll(std::vector<Contact> *contacts)
+void showAll(std::vector<ContactArray> *contacts)
 {
     for (int i = 0; i < contacts->size(); i++)
         std::cout << contacts->at(i).toString() << std::endl;
 }
 void initArray()
 {
-    std::vector<Contact> contacts;
+    std::vector<ContactArray> contacts;
 
     std::cout << "Hello, your list contacts" << std::endl;
 
