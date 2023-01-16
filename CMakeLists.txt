@@ -64,6 +64,7 @@ file(GLOB libs_src
     "src/*/*.h" "src/*/*.cpp"
     "src/*/*/*.h" "src/*/*/*.cpp"
     "src/*/*/*/*.h" "src/*/*/*/*.cpp"
+    "src/*/*/*/*/*.h" "src/*/*/*/*/*.cpp"
     )
 
 # ----- FIN FILES ----- #

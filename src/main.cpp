@@ -1,28 +1,53 @@
 #include <iostream>
 #include <string>
+#include <sqlite3.h>
 
-#include "./contact/domain/contact.h"
-#include "./contact/application/create/contactCreate.h"
-#include "./contact/infrastructure/create/contactCreateList.h"
+#include "./shared/global.h"
+#include "./shared/database/database.h"
+#include "./shared/window/window.h"
+#include "./shared/window/ui/ui.h"
 
 int main(int, char **)
 {
-    ContactCreateList repository;
-    ContactCreate create(&repository);
+    sqlite3 *db;
+    char *errorMessage = 0;
+    int rc;
 
-    try
+    rc = sqlite3_open("contacts.db", &db);
+
+    if (rc)
     {
-        create.init(Contact(1, "Sebastian Moreno Acero", "sysma1997@gmail.com", "315 357 7794"));
-        create.init(Contact(2, "Stiven Moreno Acero", "siventma@gmail.com", "316 528 3060"));
-    }
-    catch (std::string message)
-    {
-        std::cout << message << std::endl;
+        std::cout << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
 
         return 0;
     }
 
-    repository.printAll();
+    try
+    {
+        createTables(db);
+    }
+    catch (std::string error)
+    {
+        std::cout << error << std::endl;
+
+        sqlite3_close(db);
+
+        return 0;
+    }
+
+    Window window(db);
+    UI ui;
+
+    try
+    {
+        window.init(&ui);
+    }
+    catch (std::string error)
+    {
+        std::cout << error << std::endl;
+    }
+
+    sqlite3_close(db);
 
     return 0;
 }
