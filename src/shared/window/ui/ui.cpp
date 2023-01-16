@@ -9,6 +9,7 @@
 
 #include "../../global.h"
 #include "./screens/screenMain.h"
+#include "./screens/screenContact.h"
 
 void UI::init(GLFWwindow *window)
 {
@@ -35,8 +36,8 @@ void UI::newFrame(GLFWwindow *window)
 
     if (ImGui::BeginMenu("Window"))
     {
-        if (ImGui::MenuItem((!Global::showScreenMain) ? "Contacts: Show" : "Contacts: Hide"))
-            Global::showScreenMain = !Global::showScreenMain;
+        if (ImGui::MenuItem((!Global::showImGuiDemo) ? "Demo: Show" : "Demo: Hide"))
+            Global::showImGuiDemo = !Global::showImGuiDemo;
         if (ImGui::MenuItem("exit"))
             glfwSetWindowShouldClose(window, true);
 
@@ -45,8 +46,12 @@ void UI::newFrame(GLFWwindow *window)
 
     ImGui::EndMainMenuBar();
 
-    if (Global::showScreenMain)
-        screenMain();
+    screenMain();
+
+    if (Global::showImGuiDemo)
+        ImGui::ShowDemoWindow(&Global::showImGuiDemo);
+    if (Global::showScreenContact)
+        screenContact();
 
     ImGui::Render();
 }

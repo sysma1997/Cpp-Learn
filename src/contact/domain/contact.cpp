@@ -10,14 +10,14 @@ Contact::Contact()
     email = "";
     phone = "";
 }
-Contact::Contact(long id, std::string name, std::string email, std::string phone)
+Contact::Contact(int id, std::string name, std::string email, std::string phone)
 {
     this->id = id;
     this->name = name;
     this->email = email;
     this->phone = phone;
 }
-long Contact::getId()
+int Contact::getId()
 {
     return id;
 }
