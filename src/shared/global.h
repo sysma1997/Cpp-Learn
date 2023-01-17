@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include <sqlite3.h>
 
@@ -20,4 +21,9 @@ public:
 
     static Contact contact;
     static bool showScreenContact;
+    static bool editContact;
+    static char contactName[100];
+    static char contactEmail[100];
+    static char contactPhone[20];
+    static std::string contactMessage;
 };

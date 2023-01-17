@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 #include <sqlite3.h>
 
@@ -17,3 +18,8 @@ bool Global::showImGuiDemo = false;
 
 Contact Global::contact = Contact();
 bool Global::showScreenContact = false;
+bool Global::editContact = false;
+char Global::contactName[100] = "";
+char Global::contactEmail[100] = "";
+char Global::contactPhone[20] = "";
+std::string Global::contactMessage;
