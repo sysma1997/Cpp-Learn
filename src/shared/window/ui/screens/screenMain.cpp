@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include "./screenMain.h"
@@ -19,13 +20,24 @@ void screenMain()
     if (Global::contacts.size() > 0)
     {
         ImGui::Text("Search");
-        ImGui::InputText("Search", Global::search, IM_ARRAYSIZE(Global::search));
+        ImGui::InputText("##Search", Global::search, IM_ARRAYSIZE(Global::search));
 
         ImGui::NewLine();
-        ImGui::BeginListBox("Contacts");
+        ImGui::BeginListBox("##Contacts");
         for (int i = 0; i < Global::contacts.size(); i++)
         {
             Contact contact{Global::contacts.at(i)};
+
+            std::string search(Global::search);
+            if (search != "")
+            {
+                // https://stackoverflow.com/questions/651497/how-to-do-stdstring-indexof-in-c-that-returns-index-of-matching-string
+                std::string::size_type match = contact.getName().find(search, 0);
+                if (match != std::string::npos)
+                {
+                    continue;
+                }
+            }
 
             if (ImGui::Selectable(contact.getName().c_str()))
             {
@@ -36,7 +48,7 @@ void screenMain()
         ImGui::EndListBox();
     }
 
-    if (ImGui::Button("Register"))
+    if (ImGui::Button("Create"))
     {
         Global::contact = Contact();
         Global::showScreenContact = true;

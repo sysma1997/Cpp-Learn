@@ -12,6 +12,10 @@
 #include "../../../../contact/domain/contact.h"
 #include "../../../../contact/application/create/contactCreate.h"
 #include "../../../../contact/infrastructure/create/contactCreateSqlite.h"
+#include "../../../../contact/application/edit/contactEdit.h"
+#include "../../../../contact/infrastructure/edit/contactEditSqlite.h"
+#include "../../../../contact/application/remove/contactRemove.h"
+#include "../../../../contact/infrastructure/remove/contactRemoveSqlite.h"
 
 void clearContact()
 {
@@ -50,7 +54,101 @@ void contactRegister(std::string name, std::string email, std::string phone)
 
         Global::contact = contact;
         Global::contacts.push_back(contact);
-        Global::contactMessage = "Contact create success";
+
+        clearContact();
+    }
+    catch (std::string error)
+    {
+        Global::contactMessage = error;
+    }
+}
+void contactEdit(Contact contact)
+{
+    if (contact.getId() == 0 ||
+        contact.getName() == "" ||
+        contact.getPhone() == "")
+    {
+        std::string message;
+
+        if (contact.getId() == 0)
+            message += "Id not valid.";
+        if (contact.getName() == "")
+            message += std::string((contact.getId() == 0) ? "\n" : "") + "Name is required.";
+        if (contact.getPhone() == "")
+            message +=
+                std::string((contact.getId() == 0 || contact.getName() == "") ? "\n" : "") +
+                "Email is required.";
+
+        Global::contactMessage = message;
+
+        return;
+    }
+
+    Global::contactMessage = "";
+
+    ContactEditSqlite repository(Global::db);
+    ContactEdit edit(&repository);
+
+    try
+    {
+        edit.init(contact);
+
+        Global::contact = contact;
+
+        int index = 0;
+        for (int i = 0; i < Global::contacts.size(); i++)
+        {
+            if (Global::contacts[i].getId() == contact.getId())
+            {
+                index = i;
+                break;
+            }
+        }
+        Global::contacts[index] = contact;
+
+        clearContact();
+        Global::editContact = false;
+    }
+    catch (std::string error)
+    {
+        Global::contactMessage = error;
+    }
+}
+void contactRemove(int id)
+{
+    if (id == 0)
+    {
+        std::string message;
+
+        if (id == 0)
+            message += "Id not valid.";
+
+        Global::contactMessage = message;
+
+        return;
+    }
+
+    ContactRemoveSqlite repository(Global::db);
+    ContactRemove remove(&repository);
+
+    try
+    {
+        remove.init(id);
+
+        int index = 0;
+        for (int i = 0; i < Global::contacts.size(); i++)
+        {
+            if (Global::contacts[i].getId() == id)
+            {
+                index = i;
+                break;
+            }
+        }
+        Global::contacts.erase(Global::contacts.begin() + index);
+
+        clearContact();
+        Global::contact = Contact();
+        Global::showScreenContact = false;
     }
     catch (std::string error)
     {
@@ -90,7 +188,9 @@ void screenContact()
         ImGui::Text(Global::contact.getPhone().c_str());
     }
 
-    std::string textButton = (Global::contact.getId() != 0) ? "Edit" : "Register";
+    std::string textButton = (Global::contact.getId() != 0) ? "Edit" : "Create";
+    if (Global::editContact)
+        textButton = "Update";
     ImGui::NewLine();
     if (ImGui::Button(textButton.c_str()))
     {
@@ -98,31 +198,72 @@ void screenContact()
         std::string email(Global::contactEmail);
         std::string phone(Global::contactPhone);
 
-        if (Global::contact.getId() != 0)
+        if (Global::contact.getId() != 0 && !Global::editContact)
         {
+            strcpy(Global::contactName, Global::contact.getName().c_str());
+            strcpy(Global::contactEmail, Global::contact.getEmail().c_str());
+            strcpy(Global::contactPhone, Global::contact.getPhone().c_str());
+            Global::editContact = true;
+        }
+        else if (Global::contact.getId() != 0 && Global::editContact)
+        {
+            Contact contact{
+                Global::contact.getId(),
+                Global::contactName,
+                Global::contactEmail,
+                Global::contactPhone};
+
+            contactEdit(contact);
         }
         else
             contactRegister(name, email, phone);
     }
 
-    textButton = (Global::contact.getId() != 0) ? "Remove" : "Clear";
+    textButton = (Global::contact.getId() != 0 && !Global::editContact) ? "Remove" : "Clear";
     ImGui::SameLine();
     if (ImGui::Button(textButton.c_str()))
     {
-        if (Global::contact.getId() != 0)
-        {
-        }
+        if (Global::contact.getId() != 0 && !Global::editContact)
+            ImGui::OpenPopup("Remove contact?");
         else
             clearContact();
     }
 
-    textButton = (Global::contact.getId() != 0) ? "Done" : "Cancel";
+    textButton = (Global::contact.getId() != 0 && !Global::editContact) ? "Done" : "Cancel";
     ImGui::SameLine();
     if (ImGui::Button(textButton.c_str()))
     {
-        clearContact();
-        Global::showScreenContact = !Global::showScreenContact;
+        if (Global::editContact)
+            Global::editContact = false;
+        else
+        {
+            clearContact();
+            Global::showScreenContact = !Global::showScreenContact;
+        }
     }
+
+    /* MODAL REMOVE */
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    if (ImGui::BeginPopupModal("Remove contact?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        std::string text = "Remove contact " + Global::contact.getName() + "?";
+        ImGui::Text(text.c_str());
+        ImGui::Separator();
+
+        if (ImGui::Button("Yes", ImVec2(120, 0)))
+        {
+            contactRemove(Global::contact.getId());
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("No", ImVec2(120, 0)))
+            ImGui::CloseCurrentPopup();
+
+        ImGui::EndPopup();
+    }
+    /* END MODAL REMOVE */
 
     ImGui::End();
 }
