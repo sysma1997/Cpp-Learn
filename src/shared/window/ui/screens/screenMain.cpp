@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -31,12 +34,19 @@ void screenMain()
             std::string search(Global::search);
             if (search != "")
             {
-                // https://stackoverflow.com/questions/651497/how-to-do-stdstring-indexof-in-c-that-returns-index-of-matching-string
-                std::string::size_type match = contact.getName().find(search, 0);
-                if (match != std::string::npos)
-                {
+                std::string _name = contact.getName();
+                std::transform(_name.begin(),
+                               _name.end(),
+                               _name.begin(),
+                               ::toupper);
+                std::string _search = search;
+                std::transform(_search.begin(),
+                               _search.end(),
+                               _search.begin(),
+                               ::toupper);
+                std::string::size_type match = _name.find(_search);
+                if (match == std::string::npos)
                     continue;
-                }
             }
 
             if (ImGui::Selectable(contact.getName().c_str()))
