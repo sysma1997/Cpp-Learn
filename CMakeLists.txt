@@ -50,7 +50,7 @@ if(EXPERIMENTAL_FEATURE)
 list(APPEND opts_src "experimental_feature.cpp")
 # También se puede hacer con SET
 # SET(opts_src ${opts_src} "experimental_feature.cpp")
-ENDIF()
+endif()
 
 # ----- FIN CONDICIONALES ----- #
 
